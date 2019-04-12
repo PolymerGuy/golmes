@@ -20,7 +20,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="gopher.png" alt="Logo" width="150" height="150">
+    <img src="gopher.png" alt="Logo" width="220" height="220">
   </a>
 
   <h3 align="center">Golmes</h3>
