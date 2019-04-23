@@ -44,23 +44,24 @@
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
-* [About the Project](#about-the-project)
-  * [Built With](#built-with)
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
-* [Usage](#usage)
-* [Contributing](#contributing)
-* [License](#license)
-* [Contact](#contact)
-* [Acknowledgements](#acknowledgements)
+- [Table of Contents](#table-of-contents)
+- [About The Project](#about-the-project)
+  - [Built With](#built-with)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation using Go get](#installation-using-go-get)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+- [Acknowledgements](#acknowledgements)
 
 
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot](use.png)
+[Product Name Screen Shot](use.png)
 
 This tool can be used for parametric optimization via any software that supports inpufiles. We do this by first identifying keywords in a template file which will be
 replaced by the arguments that we wish to treat as optimization variables.
@@ -89,41 +90,145 @@ This project is a composition of the wonderfull works of other people and I am j
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+You can obtain this application in two ways:
+
+* Download a pre-compiled binary from [here](#release)
+* Compile the source code 
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
+Install the golang compiler
+* snap
 ```sh
-npm install npm@latest -g
+snap install go
 ```
-
-### Installation
-
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+* apt
 ```sh
-git clone https:://github.com/your_username_/Project-Name.git
+sudo apt install golang
 ```
-3. Install NPM packages
-```sh
-npm install
-```
-4. Enter your API in `config.js`
-```JS
-const API_KEY = 'ENTER YOUR API';
-```
+or download directly from the golang homepage
 
+### Installation using Go get
+
+1. Open a terminal and type:
+```sh
+go get https://github.com/PolymerGuy/golmes.git
+go install golmes
+```
 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+As an example, we will use a mysterious mock application which takes two variables from a input file, runs an simulation and returns a series of data. We will try to find the input variables which gives the best match to a user specified data series.
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+The input file looks like this:
+```sh
+# Input file
+val1
+val2
+```
+we now substitute val1 and val2 by some floats like this
+```sh
+# Input file
+10.
+0.7
+```
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+and run the application like this:
+```sh
+./sim inputfile.txt
+```
+
+a file named inputfile_res.txt is returned and contains the following:
+```sh
+strain,stress
+0e+00,0e+00
+6e-03,2.04e+00
+1.2e-02,4.08e+00
+1.8e-02,6.12e+00
+2.4e-02,8.16e+00
+...
+```
+
+and if we plot this data:
+[stress_strain_curce](stress_strain.png)
+
+Let us now pretend that we are looking for the arguments which corresponds to the following data stored in a reference.csv file:
+
+[stress_strain_curce](stress_strain_target.png)
+
+We can do this by help of Mr. Golmes.
+In order to define an optimization job, we have to fill in an yaml template:
+```sh
+#job.yaml
+Solver_settings:
+  method: Nelder-Mea
+  threshold: 1e-2
+  evaluations: 50
+
+application_settings:
+  cmd: ./sim
+  flags: 
+  inputfile: inputfile.txt
+  keywords:
+    - val1
+    - val2
+  initial_parameters:
+    - 10.0
+    - 0.7
+
+
+DataComparators:
+  - type: synced
+    referencefile: reference.csv
+    currentfile : inputfile_iter_res.txt
+    commonargsfile :
+    keywords:
+      - strain
+      - stress
+```
+
+and initiate Golmes from the folder containing the files like this:
+```sh
+golmes job.yaml -v -noui -nostore
+```
+
+this will print the following output:
+```sh
+Mr. Golmes is working...
+
+iteration:1
+parameters:
+val1:10.0
+val2:0.7
+Calling: ./sim inputfile.txt
+Residual: 19283.0
+
+iteration:2
+parameters:
+val1:9.0
+val2:1.6
+Calling: ./sim inputfile.txt
+Residual: 10283.0
+
+iteration:3
+parameters:
+val1:7.0
+val2:4.1
+Calling: ./sim inputfile.txt
+Residual: 1026.0
+
+....
+iteration:7
+parameters:
+val1:7.0
+val2:3.7
+Calling: ./sim inputfile.txt
+Residual: 0.0
+
+Converged in 7 iterations
+saved output to results.txt
+```
 
 
 
@@ -150,9 +255,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Sindre Olufse  - sindre.n.olufsen@ntnu.no
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [https://github.com/PolymerGuy/golmes](https://github.com/PolymerGuy/golmes)
 
 
 
@@ -182,4 +287,5 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
 [product-screenshot]: https://raw.githubusercontent.com/othneildrew/Best-README-Template/master/screenshot.png
+[release]: https://github.com/PolymerGuy/golmes
 
