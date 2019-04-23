@@ -61,7 +61,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[Product Name Screen Shot](use.png)
+![Use](use.png)
 
 This tool can be used for parametric optimization via any software that supports inpufiles. We do this by first identifying keywords in a template file which will be
 replaced by the arguments that we wish to treat as optimization variables.
@@ -151,11 +151,11 @@ strain,stress
 ```
 
 and if we plot this data:
-[stress_strain_curce](stress_strain.png)
+![stress_strain_curce](stress_strain.png)
 
 Let us now pretend that we are looking for the arguments which corresponds to the following data stored in a reference.csv file:
 
-[stress_strain_curce](stress_strain_target.png)
+![stress_strain_curce](stress_strain_target.png)
 
 We can do this by help of Mr. Golmes.
 In order to define an optimization job, we have to fill in an yaml template:
