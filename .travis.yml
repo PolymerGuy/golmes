@@ -5,7 +5,7 @@ go:
 before_install:
   - go get -t gopkg.in/yaml.v2
   - go get -t github.com/PolymerGuy/golmes
-  - go get -t gonum.org/v1/gonum/...
+  - go get -t gonum.org/v1/
   - go get -t gopkg.in/yaml.v2
   - go get -t github.com/urfave/cli
 
