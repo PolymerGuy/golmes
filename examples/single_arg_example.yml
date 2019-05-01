@@ -1,0 +1,38 @@
+Solver_settings:
+  method: Nelder-Mead
+  threshold: 1e-2
+  evaluations: 50
+  coarsesearch:
+    seed:
+      - 7
+      - 7
+    limits:
+      - 5.1 9.2
+      - 2.3 4.1
+
+Abaqus_settings:
+  path: /home/sindreno/go/src/github.com/PolymerGuy/golmes/_ABQSim/abq
+  inputfile: /home/sindreno/go/src/github.com/PolymerGuy/golmes/_ABQSim/inputfile.txt
+  keywords:
+    - val1
+    - val2
+  initial_parameters:
+    - 8
+    - 3
+
+
+DataComparators:
+  - type: synced
+    referencefile: /home/sindreno/go/src/github.com/PolymerGuy/golmes/dummydata/data.csv
+    currentfile : /home/sindreno/go/src/github.com/PolymerGuy/golmes/_ABQSim/inputfile_iter_res.txt
+    commonargsfile :
+    keywords:
+      - strain
+      - stress
+
+Work_directory: /home/sindreno/go/src/github.com/PolymerGuy/golmes/_ABQSim/work/
+
+
+
+
+
