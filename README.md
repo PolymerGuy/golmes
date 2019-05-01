@@ -13,8 +13,8 @@
 [![MIT License][license-shield]][license-url]
 [![Build Status](https://travis-ci.org/PolymerGuy/golmes.svg?branch=master)](https://travis-ci.org/PolymerGuy/golmes)
 [![codecov](https://codecov.io/gh/PolymerGuy/golmes/branch/master/graph/badge.svg)](https://codecov.io/gh/PolymerGuy/golmes)
-
-
+[![Go Report Card](https://goreportcard.com/badge/github.com/PolymerGuy/golmes)](https://goreportcard.com/report/github.com/PolymerGuy/golmes)
+[![Documentation](https://godoc.org/github.com/PolymerGuy/golmes?status.svg)](http://godoc.org/github.com/PolymerGuy/golmes)
 
 
 <!-- PROJECT LOGO -->
