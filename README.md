@@ -11,8 +11,9 @@
 
 <!-- PROJECT SHIELDS -->
 [![MIT License][license-shield]][license-url]
-[![Build Status](https://travis-ci.org/PolymerGuy/tinyOpt.svg?branch=master)](https://travis-ci.org/PolymerGuy/tinyOpt)
-[![codecov](https://codecov.io/gh/PolymerGuy/tinyOpt/branch/master/graph/badge.svg)](https://codecov.io/gh/PolymerGuy/tinyOpt)
+[![Build Status](https://travis-ci.org/PolymerGuy/golmes.svg?branch=master)](https://travis-ci.org/PolymerGuy/golmes)
+[![codecov](https://codecov.io/gh/PolymerGuy/golmes/branch/master/graph/badge.svg)](https://codecov.io/gh/PolymerGuy/golmes)
+
 
 
 
@@ -20,7 +21,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="gopher.png" alt="Logo" width="220" height="220">
+    <img src="./docs/gopher.png" alt="Logo" width="320" height="320">
   </a>
 
   <h3 align="center">Golmes</h3>
@@ -61,7 +62,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-![Use](use.png)
+![Use](./docs/use.png)
 
 This tool can be used for parametric optimization via any software that supports inpufiles. We do this by first identifying keywords in a template file which will be
 replaced by the arguments that we wish to treat as optimization variables.
@@ -151,11 +152,11 @@ strain,stress
 ```
 
 and if we plot this data:
-![stress_strain_curce](stress_strain.png)
+![stress_strain_curce](./docs/stress_strain.png)
 
 Let us now pretend that we are looking for the arguments which corresponds to the following data stored in a reference.csv file:
 
-![stress_strain_curce](stress_strain_target.png)
+![stress_strain_curce](./docs/stress_strain_target.png)
 
 We can do this by help of Mr. Golmes.
 In order to define an optimization job, we have to fill in an yaml template:
