@@ -5,18 +5,13 @@ import (
 	"log"
 )
 
-
 var Web = cli.Command{
-	Name:  "web",
-	Usage: "Start web interface",
+	Name:        "web",
+	Usage:       "Start web interface",
 	Description: `This is a web interface where you can monitor the optimization process`,
-	Action: webUI,
-
+	Action:      webUI,
 }
 
-func webUI(c *cli.Context){
+func webUI(c *cli.Context) {
 	log.Println("The web ui is not implemented yet")
 }
-
-
-

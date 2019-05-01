@@ -60,7 +60,7 @@ func (app CostFunction) Eval(args []float64) float64 {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(id, args,res)
+	log.Println(id, args, res)
 
 	return res
 }

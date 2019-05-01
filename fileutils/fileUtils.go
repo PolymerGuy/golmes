@@ -15,18 +15,17 @@ import (
 	"strings"
 )
 
-func MakeInputFile(templateFileName string,workdir string,  values []float64, placeholders []string) (string, error) {
-	filename :=  filepath.Base(templateFileName)
+func MakeInputFile(templateFileName string, workdir string, values []float64, placeholders []string) (string, error) {
+	filename := filepath.Base(templateFileName)
 
-	inputFileName := workdir +"/"+ strings.TrimSuffix(filename, ".txt") + "_iter.txt"
+	inputFileName := workdir + "/" + strings.TrimSuffix(filename, ".txt") + "_iter.txt"
 
-	inputFileName = workdir +"/"+ filename
-
+	inputFileName = workdir + "/" + filename
 
 	//err := os.MkdirAll(id,0755)
 	//if err != nil{
-//		log.Panic(err)
-//	}
+	//		log.Panic(err)
+	//	}
 
 	stringArgs := floatsToStrings(values)
 	substituteInFile(templateFileName, inputFileName, placeholders, stringArgs)
@@ -95,6 +94,7 @@ func GetKeyFromCSVFile(fileName string, key string) []float64 {
 
 	return row
 }
+
 // floatsColumn get all floats contained in a csv column, skips non-float values
 func floatsColumn(reader *csv.Reader, columnInd int) ([]float64, error) {
 	results := []float64{}
@@ -107,15 +107,14 @@ func floatsColumn(reader *csv.Reader, columnInd int) ([]float64, error) {
 			return results, err
 		}
 
-		if len(line)<columnInd{
-			return results,errors.New("Column id is out of range")
-		}else {
+		if len(line) < columnInd {
+			return results, errors.New("Column id is out of range")
+		} else {
 			num, err := parseFloat(line[columnInd])
 			if err == nil {
 				results = append(results, num)
 			}
 		}
-
 
 	}
 	return results, nil

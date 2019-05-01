@@ -47,21 +47,21 @@ func Test_minFloatInSlice(t *testing.T) {
 }
 
 func TestEnclosedWithin(t *testing.T) {
-	serie1:= Arange(-5,5,1)
-	serie2 := Arange(-2,3,1)
-	serie3:= Arange(6,12,1)
-	serie4:= Arange(-2.5,3.5,1)
+	serie1 := Arange(-5, 5, 1)
+	serie2 := Arange(-2, 3, 1)
+	serie3 := Arange(6, 12, 1)
+	serie4 := Arange(-2.5, 3.5, 1)
 
 	// Check for no union, should return empty slice
-	if !floats.Equal(EnclosedWithin(serie1,serie3),[]float64{}){
+	if !floats.Equal(EnclosedWithin(serie1, serie3), []float64{}) {
 		t.Errorf("Did not handle no union")
 	}
 
-	if !floats.Equal(EnclosedWithin(serie1,serie2),serie2){
+	if !floats.Equal(EnclosedWithin(serie1, serie2), serie2) {
 		t.Errorf("Did not handle union")
 	}
 
-	if !floats.Equal(EnclosedWithin(serie1,serie4),serie2){
+	if !floats.Equal(EnclosedWithin(serie1, serie4), serie2) {
 		t.Errorf("Did not handle union")
 	}
 }

@@ -74,15 +74,15 @@ func Test_findWordInd(t *testing.T) {
 func Test_parseFloat(t *testing.T) {
 	tol := 1e-9
 
-	if val,err := parseFloat("1e9");!floats.EqualWithinAbs(val,float64(1e9),tol)||err!=nil{
-		t.Fatalf("Did not correct the correct float. Should be %v got %v",float64(1e9),val)
+	if val, err := parseFloat("1e9"); !floats.EqualWithinAbs(val, float64(1e9), tol) || err != nil {
+		t.Fatalf("Did not correct the correct float. Should be %v got %v", float64(1e9), val)
 	}
 
-	if val,err := parseFloat("-1e9");!floats.EqualWithinAbs(val,float64(-1e9),tol)||err!=nil{
-		t.Fatalf("Did not correct the correct float. Should be %v got %v",float64(-1e9),val)
+	if val, err := parseFloat("-1e9"); !floats.EqualWithinAbs(val, float64(-1e9), tol) || err != nil {
+		t.Fatalf("Did not correct the correct float. Should be %v got %v", float64(-1e9), val)
 	}
 
-	if val,err := parseFloat("-1.23456");!floats.EqualWithinAbs(val,float64(-1.23456),tol)||err!=nil{
-		t.Fatalf("Did not correct the correct float. Should be %v got %v",float64(-1.23456),val)
+	if val, err := parseFloat("-1.23456"); !floats.EqualWithinAbs(val, float64(-1.23456), tol) || err != nil {
+		t.Fatalf("Did not correct the correct float. Should be %v got %v", float64(-1.23456), val)
 	}
 }

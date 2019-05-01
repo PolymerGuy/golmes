@@ -44,7 +44,7 @@ type YamlData struct {
 	Comparators    []DataComparators `DataComparators`
 	AbqSettings    AbqSetting        `Abaqus_settings`
 	SolverSettings SolverSet         `Solver_settings`
-	WorkDir	string	`Work_directory`
+	WorkDir        string            `Work_directory`
 }
 
 func Parse(yamlData []byte) YamlData {
@@ -109,7 +109,7 @@ func MakeComparator(settings DataComparators) data.PairWithArgs {
 
 }
 
-func MakeComparatorCurPath(settings DataComparators,curData data.SerieWithArgs) data.PairWithArgs {
+func MakeComparatorCurPath(settings DataComparators, curData data.SerieWithArgs) data.PairWithArgs {
 
 	refStrain := data.NewSeriesFromFile(settings.Referencefile, settings.Keywords[0])
 
@@ -121,8 +121,6 @@ func MakeComparatorCurPath(settings DataComparators,curData data.SerieWithArgs) 
 	return data.NewPairWithArgs(refData, curData, refStrain)
 
 }
-
-
 
 func (data YamlData) NewOptimizerMethod() optimize.Method {
 	method := lowerCaseWithoutSeps(data.SolverSettings.Method)

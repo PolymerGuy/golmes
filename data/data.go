@@ -12,9 +12,6 @@ import (
 	"sort"
 )
 
-
-
-
 type DataReader interface {
 	Read() []float64
 }
