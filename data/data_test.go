@@ -41,35 +41,35 @@ func TestPairSyncArgs_Compare(t *testing.T) {
 	serie3 := SerieWithArgs{serieArgs3, serieArgs3}
 	serie4 := SerieWithArgs{serieArgs4, serieArgs4}
 
-	NewPairWithArgs(serie1, serie1, emptyFloatSlice).Compare()
+	NewPairWithArgs(serie1, serie1, emptyFloatSlice).Compare(serie1)
 
 	// Compare equal series should return 0
-	if val, _ := NewPairWithArgs(serie1, serie1, emptyFloatSlice).Compare(); val != 0.0 {
+	if val, _ := NewPairWithArgs(serie1, serie1, emptyFloatSlice).Compare(serie1); val != 0.0 {
 		t.Errorf("Compare does not return zero error for equal series")
 	}
 
 	// Compare should evaluate all points in serieArgs1 and return 0
-	if val, _ := NewPairWithArgs(serie1, serie2, emptyFloatSlice).Compare(); val != 0.0 {
+	if val, _ := NewPairWithArgs(serie1, serie2, emptyFloatSlice).Compare(serie2); val != 0.0 {
 		t.Errorf("Compare does not return zero error for unequal args and common vals on linear data")
 	}
 
 	// Not overlapping series should return error
-	if _, err := NewPairWithArgs(serie1, serie3, emptyFloatSlice).Compare(); err == nil {
+	if _, err := NewPairWithArgs(serie1, serie3, emptyFloatSlice).Compare(serie3); err == nil {
 		t.Errorf("Compare does not return zero error for unequal args and common vals on linear data")
 	}
 
 	// Compare should evaluate the point at 1 in serieArgs1 and return 0
-	if val, _ := NewPairWithArgs(serie1, serie4, emptyFloatSlice).Compare(); val != 0.0 {
+	if val, _ := NewPairWithArgs(serie1, serie4, emptyFloatSlice).Compare(serie4); val != 0.0 {
 		t.Errorf("Compare does not return zero error for unequal args and common vals on linear data")
 	}
 
 	// Compare should evaluate the point in serieArgs4 and return 0
-	if val, _ := NewPairWithArgs(serie1, serie4, serieArgs4).Compare(); val != 0.0 {
+	if val, _ := NewPairWithArgs(serie1, serie4, serieArgs4).Compare(serie4); val != 0.0 {
 		t.Errorf("Compare does not return zero error for unequal args and common vals on linear data")
 	}
 
 	// Not overlapping args should return error
-	if _, err := NewPairWithArgs(serie1, serie1, serieArgs3).Compare(); err == nil {
+	if _, err := NewPairWithArgs(serie1, serie1, serieArgs3).Compare(serie1); err == nil {
 		t.Errorf("Compare does not return zero error for unequal args and common vals on linear data")
 	}
 
