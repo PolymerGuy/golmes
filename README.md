@@ -41,6 +41,10 @@
 </p>
 
 
+## Status
+This code has very rough edges at the moment and is not ready for use in the current state.
+
+
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
