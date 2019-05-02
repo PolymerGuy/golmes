@@ -71,12 +71,16 @@ func CoarseSearch(optJob OptimizationJob, coarse yamlparser.CoarseSearchSettings
 		bounds = append(bounds, bound.Bound{coarse.Bounds[i*2], coarse.Bounds[i*2+1]})
 	}
 
-	d := UniformGrid{Bounds: bounds, Seeds: coarse.Seeds}
+	d := makeUniformGrid(bounds,coarse.Seeds)
 
 	method := optimize.GuessAndCheck{Rander: &d}
 
+	log.Println("number of points are:",nPts)
+
 	optJob.Settings.MajorIterations = nPts
 	optJob.Settings.FuncEvaluations = nPts
+	optJob.Settings.Converger = &optimize.FunctionConverge{Absolute:1e-3,
+		Iterations:nPts}
 	printer := &optimize.Printer{
 		Writer:          os.Stdout,
 		HeadingInterval: 30,
@@ -105,8 +109,17 @@ type UniformGrid struct {
 	grid     [][]float64
 }
 
+func makeUniformGrid(bounds []bound.Bound,seeds []int)UniformGrid{
+	return UniformGrid{Bounds:bounds,
+		Seeds:seeds,
+	curpoint:0}
+}
+
+
+
 func (n *UniformGrid) Rand(x []float64) []float64 {
 	pts := []float64{}
+	log.Println("calling rand")
 
 	if n.grid == nil {
 		n.makeGrid()
@@ -114,6 +127,12 @@ func (n *UniformGrid) Rand(x []float64) []float64 {
 
 	if x == nil {
 		return x
+	}
+
+	log.Println("Point",n.curpoint)
+
+	if n.curpoint >=len(n.grid){
+		return nil
 	}
 
 	pts = n.grid[n.curpoint]
@@ -137,4 +156,5 @@ func (n *UniformGrid) makeGrid() {
 	pts := meshgrid.Multiple(grid)
 
 	n.grid = pts
+	log.Println("Made the grid: ",pts)
 }

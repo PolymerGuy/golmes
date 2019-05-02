@@ -27,7 +27,7 @@ func main() {
 	data := readFloatsFromFile(inputFile)
 	fmt.Println(data)
 
-	results,args := mysterious2ArgFunction(data)
+	results,args := mysterious3ArgFunction(data)
 	time.Sleep(100 * time.Millisecond)
 	fmt.Println("Results:",results)
 	writeShitToFile(saveFileAs,results,args)
@@ -93,7 +93,7 @@ func parseFloat(str string) float64 {
 	return s
 }
 
-func mysterious2ArgFunction(args[]float64)([]float64,[]float64){
+func mysterious3ArgFunction(args[]float64)([]float64,[]float64){
 	// evals abs(args[0]x²+args[1}x) for x=[-2,-1,1,2]
 	//xs :=[]float64{0.,1.2,1.7,1.9,2,2}
 	xs := make([]float64, 100)
@@ -105,7 +105,7 @@ func mysterious2ArgFunction(args[]float64)([]float64,[]float64){
 	results :=[]float64{}
 	for _, x:=range xs {
 		//results = append(results, math.Abs(args[0]*math.Pow(x,2)+args[1]*x))
-		results = append(results, bilinear(x,args[0],args[1]))
+		results = append(results, args[2] + bilinear(x,args[0],args[1]))
 	}
 	return results,xs
 	}

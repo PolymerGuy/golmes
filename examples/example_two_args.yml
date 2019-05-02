@@ -12,7 +12,7 @@ Solver_settings:
 
 Abaqus_settings:
   path: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummyApp/abq
-  inputfile: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummyApp/inputfile.txt
+  inputfile: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummyApp/inputfile_2arg.txt
   keywords:
     - val1
     - val2
