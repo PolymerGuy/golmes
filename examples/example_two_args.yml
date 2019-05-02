@@ -11,8 +11,8 @@ Solver_settings:
       - 2.3 4.1
 
 Abaqus_settings:
-  path: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummyApp/abq
-  inputfile: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummyApp/inputfile_2arg.txt
+  path: ./examples/dummyApp/abq
+  inputfile: ./examples/dummyApp/inputfile_2arg.txt
   keywords:
     - val1
     - val2
@@ -23,14 +23,14 @@ Abaqus_settings:
 
 DataComparators:
   - type: synced
-    referencefile: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummydata/data.csv
-    currentfile : /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummyApp/inputfile_iter_res.txt
+    referencefile: ./examples/dummydata/data.csv
+    currentfile : ./examples/dummyApp/inputfile_iter_res.txt
     commonargsfile :
     keywords:
       - strain
       - stress
 
-Work_directory: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/work/
+Work_directory: ./examples/work/
 
 
 
