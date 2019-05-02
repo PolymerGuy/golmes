@@ -8,7 +8,7 @@ BINARY_NAME=./golmes
 BINART_FOLDER_NAME=./
 BINARY_UNIX=$(BINARY_NAME)_unix
 ABQ_MOCK_BINARY = ./examples/dummyApp/abq
-INPUT_FILE = examples/single_arg_example.yml
+INPUT_FILE = examples/example_two_args.yml
 
 
 all: test build run
