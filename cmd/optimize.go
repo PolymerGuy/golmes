@@ -65,3 +65,29 @@ func optJobFromYAML(yamlFile []byte) (yamlparser.CoarseSearchSettings, minimize.
 	}
 	return coarseSearch, optJob
 }
+
+
+func optJobsFromYAML(yamlFile []byte) (yamlparser.CoarseSearchSettings, minimize.OptimizationJob) {
+	parser := yamlparser.Parse(yamlFile)
+
+
+	jobs := []minimize.OptimizationJob
+	for ,_ := range parser.Comparators{
+
+		comparator := parser.NewComparator()[0]
+		costFunction := parser.NewCostFunction()
+		method := parser.NewOptimizerMethod()
+		costFunction.Comparator = comparator
+		settings := parser.NewOptimizerSettings()
+		coarseSearch := parser.NewCoarseSearch()
+
+		optJob := minimize.OptimizationJob{
+		InitialParameters: costFunction.InitialParameters,
+		Method:            method,
+		CostFunc:          costFunction,
+		Settings:          settings,
+	}
+		jobs = append(jobs,optJob)
+	}
+	return jobs
+}
