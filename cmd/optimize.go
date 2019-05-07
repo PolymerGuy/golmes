@@ -34,7 +34,11 @@ func optimize(c *cli.Context) {
 		log.Println("Coarse search gave:")
 		output.PrettyPrint(initialParameters)
 
-		optJob.InitialParameters = initialParameters.X
+
+		best := minimize.CoarseSearchSurf(optJob, coarseSeach)
+
+
+		optJob.InitialParameters = best
 
 		res, err := minimize.FindFunctionMinima(optJob)
 		if err != nil {

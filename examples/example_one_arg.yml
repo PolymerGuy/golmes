@@ -4,9 +4,9 @@ Solver_settings:
   evaluations: 50
   coarsesearch:
     seed:
-      - 7
+      - 5
     limits:
-      - 2.3 4.1
+      - 2 5.
 
 Abaqus_settings:
   path: ./examples/dummyApp/abq

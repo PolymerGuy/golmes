@@ -4,8 +4,8 @@ Solver_settings:
   evaluations: 50
   coarsesearch:
     seed:
-      - 7
-      - 7
+      - 4
+      - 4
     limits:
       - 5.1 9.2
       - 2.3 4.1

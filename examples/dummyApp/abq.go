@@ -1,12 +1,12 @@
 package main
 
 import (
-	"os"
 	"fmt"
 	"io/ioutil"
 	"log"
-	"strings"
+	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -28,7 +28,7 @@ func main() {
 	fmt.Println(data)
 
 	results,args := mysterious3ArgFunction(data)
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 	fmt.Println("Results:",results)
 	writeShitToFile(saveFileAs,results,args)
 
