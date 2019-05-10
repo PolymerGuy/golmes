@@ -30,15 +30,16 @@ func optimize(c *cli.Context) {
 			log.Println(err)
 		}
 		coarseSeach, optJob := optJobFromYAML(file)
-		initialParameters, _ := minimize.CoarseSearch(optJob, coarseSeach)
-		log.Println("Coarse search gave:")
-		output.PrettyPrint(initialParameters)
+		//initialParameters, _ := minimize.CoarseSearch(optJob, coarseSeach)
+		//log.Println("Coarse search gave:")
+		//output.PrettyPrint(initialParameters)
 
 
 		best := minimize.CoarseSearchSurf(optJob, coarseSeach)
 
 
 		optJob.InitialParameters = best
+		log.Println("Snip here...")
 
 		res, err := minimize.FindFunctionMinima(optJob)
 		if err != nil {
