@@ -31,14 +31,17 @@ func optimize(c *cli.Context) {
 		}
 		coarseSeach, optJob := optJobFromYAML(file)
 
+		// Do a response surface naive search
 		coarseResults ,err := minimize.CoarseSearchSurf(optJob, coarseSeach)
 		if err!= nil{
 			log.Println(err)
 		}
 
+		// Use the results from the coarse search as initial parameters
 		optJob.InitialParameters = coarseResults
 		log.Println("Snip here...")
 
+		// Do a fine search
 		res, err := minimize.FindFunctionMinima(optJob)
 		if err != nil {
 			log.Panic(err)
