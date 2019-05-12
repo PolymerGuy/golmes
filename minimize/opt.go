@@ -88,100 +88,80 @@ func CoarseSearch(optJob OptimizationJob, coarse yamlparser.CoarseSearchSettings
 func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSettings) []float64 {
 	args := [][]float64{}
 	vals := []float64{}
+	bestArg := []float64{}
 
 	nDims := len(coarse.Seeds)
 
-	f := optJob.CostFunc.Eval
 
-
+	nScales := 3
+	refinementFactor := 0.1
+	fineSearchUpsampling := 50
 	d := makeUniformGrid(coarse.Bounds, coarse.Seeds)
 
-	for range maths.Linspace(0., .1, coarse.NPts) {
-		dummyArg := make([]float64,nDims)
+	for i:=0;i<nScales;i++ {
 
-		point := d.Rand(dummyArg)
+		for range maths.Linspace(0., .1, coarse.NPts) {
+			dummyArg := make([]float64, nDims)
+			point := d.Rand(dummyArg)
+			args = append(args, point)
+			vals = append(vals, optJob.CostFunc.Eval(point))
 
-		args = append(args, point)
-		vals = append(vals, f(point))
+		}
+
+		fineSeeds := []int{}
+		for _, seed := range coarse.Seeds {
+			fineSeeds = append(fineSeeds, seed*fineSearchUpsampling)
+		}
+
+		dFine := makeUniformGrid(coarse.Bounds, fineSeeds)
+		nPtsFine := coarse.NPts * int(math.Pow(float64(fineSearchUpsampling),float64(nDims)))
+
+		argsFine := [][]float64{}
+		for range maths.Linspace(0., .1, nPtsFine) {
+			dummyArg := make([]float64, nDims)
+			point := dFine.Rand(dummyArg)
+
+			argsFine = append(argsFine, point)
+
+		}
+
+		fmt.Println("Checkling points", len(argsFine))
+		fmt.Println("Checkling points", nPtsFine)
+
+		rbi := gorbi.NewRBF(args, vals)
+
+		rbiVals := rbi.At(argsFine)
+		best := floats.Min(rbiVals)
+		bestArg = argsFine[floats.MinIdx(rbiVals)]
+
+		fmt.Println("Beste values is:",best)
+		fmt.Println("found at:",bestArg)
+
+
+
+		boundsFine := []float64{}
+		cent := bestArg
+
+		for i, _ := range coarse.Seeds {
+			span := math.Abs(coarse.Bounds[i*2] - coarse.Bounds[i*2+1])
+			min := cent[i] - span*refinementFactor/2.
+			max := cent[i] + span*refinementFactor/2.
+
+			boundsFine = append(boundsFine, min, max)
+		}
+
+		fmt.Println("Bounds:", boundsFine)
+
+		d = makeUniformGrid(boundsFine, coarse.Seeds)
+
+
+
+
+
 
 	}
 
-
-
-
-
-
-	fineSeeds := []int{}
-	for _, seed := range coarse.Seeds {
-		fineSeeds = append(fineSeeds, seed*50)
-	}
-
-	dFine := makeUniformGrid(coarse.Bounds, fineSeeds)
-	nPtsFine := 1
-	for _, seed := range fineSeeds {
-		nPtsFine *= seed
-	}
-
-	argsFine := [][]float64{}
-	for range maths.Linspace(0., .1, nPtsFine) {
-		dummyArg := make([]float64,nDims)
-		point := dFine.Rand(dummyArg)
-
-		argsFine = append(argsFine, point)
-
-	}
-
-	fmt.Println("Checkling points", len(argsFine))
-
-	rbi := gorbi.NewRBF(args, vals)
-	rbiVals := rbi.At(argsFine)
-	best := floats.Min(rbiVals)
-	bestArg := floats.MinIdx(rbiVals)
-
-	fmt.Println("Stuff!")
-	fmt.Println("Evaluated N pts: ", fineSeeds)
-	fmt.Println("Best values was: ", floats.Min(vals))
-	fmt.Println("at argument: ", argsFine[floats.MinIdx(vals)])
-	fmt.Println("Best values is: ", best)
-	fmt.Println("at argument: ", argsFine[bestArg])
-	fmt.Println("Checked the best value and it is:", f(argsFine[bestArg]))
-	fmt.Println("Starting fine search")
-	fmt.Println("")
-
-	boundsFine := []float64{}
-	scale := 0.3
-	cent := argsFine[bestArg]
-
-	for i, _ := range coarse.Seeds {
-		span := math.Abs(coarse.Bounds[i*2] - coarse.Bounds[i*2+1])
-		min := cent[i] - span*scale/2.
-		max := cent[i] + span*scale/2.
-
-		boundsFine = append(boundsFine, min, max)
-	}
-
-	fmt.Println("Bounds:", boundsFine)
-
-	dFines := makeUniformGrid(boundsFine, coarse.Seeds)
-	for range maths.Linspace(0., .1, coarse.NPts) {
-		dummyArg := make([]float64,nDims)
-		point := dFines.Rand(dummyArg)
-		args = append(args, point)
-		vals = append(vals, f(point))
-
-	}
-
-	bestFine := floats.Min(vals)
-	bestArgFine := floats.MinIdx(vals)
-	bestFinePos := args[bestArgFine]
-
-	fmt.Println("Second search gave:")
-	fmt.Println(bestFine)
-	fmt.Println(bestFinePos)
-
-
-
-	return argsFine[bestArg]
+	return bestArg
 
 }
 
@@ -233,13 +213,12 @@ func (n *UniformGrid) makeGrid() {
 }
 
 func makeUniformGrid(bounds []float64, seeds []int) UniformGrid {
-	nPairs := len(bounds)/2
+	nPairs := len(bounds) / 2
 
 	boundss := []bound.Bound{}
 	for i := 0; i < nPairs; i++ {
 		boundss = append(boundss, bound.Bound{bounds[i*2], bounds[i*2+1]})
 	}
-
 
 	return UniformGrid{Bounds: boundss,
 		Seeds:    seeds,

@@ -37,7 +37,6 @@ func optimize(c *cli.Context) {
 
 		best := minimize.CoarseSearchSurf(optJob, coarseSeach)
 
-
 		optJob.InitialParameters = best
 		log.Println("Snip here...")
 
