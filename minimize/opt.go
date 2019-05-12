@@ -5,8 +5,8 @@ import (
 	"github.com/PolymerGuy/golmes/costfunctions"
 	"github.com/PolymerGuy/golmes/maths"
 	"github.com/PolymerGuy/golmes/yamlparser"
+	"github.com/PolymerGuy/gorbi"
 	"github.com/btracey/meshgrid"
-	"github.com/polymerguy/gorbi"
 	"gonum.org/v1/gonum/bound"
 	"gonum.org/v1/gonum/floats"
 	"gonum.org/v1/gonum/optimize"
@@ -85,41 +85,31 @@ func CoarseSearch(optJob OptimizationJob, coarse yamlparser.CoarseSearchSettings
 
 }
 
-func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSettings)[]float64{
+func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSettings) []float64 {
 
-	p := optimize.Problem{
-		Func: optJob.CostFunc.Eval,
-	}
-
-
-	nPts := 1
-	for _, seed := range coarse.Seeds {
-		nPts *= seed
-	}
+	f := optJob.CostFunc.Eval
 
 	bounds := []bound.Bound{}
 	for i, _ := range coarse.Seeds {
 		bounds = append(bounds, bound.Bound{coarse.Bounds[i*2], coarse.Bounds[i*2+1]})
 	}
 
-
 	d := makeUniformGrid(bounds, coarse.Seeds)
 
 	args := [][]float64{}
-	vals :=[]float64{}
+	vals := []float64{}
 
-	for range maths.Linspace(0.,.1,nPts){
-		point := d.Rand([]float64{0.,0.0})
+	for range maths.Linspace(0., .1, coarse.NPts) {
+		point := d.Rand([]float64{0., 0.0})
 
 		args = append(args, point)
-		vals = append(vals,p.Func(point))
+		vals = append(vals, f(point))
 
 	}
 
-
 	fineSeeds := []int{}
-	for _,seed := range coarse.Seeds{
-		fineSeeds = append(fineSeeds,seed*50)
+	for _, seed := range coarse.Seeds {
+		fineSeeds = append(fineSeeds, seed*50)
 	}
 
 	dFine := makeUniformGrid(bounds, fineSeeds)
@@ -128,35 +118,34 @@ func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSett
 		nPtsFine *= seed
 	}
 
-
 	argsFine := [][]float64{}
-	for range maths.Linspace(0.,.1,nPtsFine){
-		point := dFine.Rand([]float64{0.,0.0})
+	for range maths.Linspace(0., .1, nPtsFine) {
+		point := dFine.Rand([]float64{0., 0.0})
 
 		argsFine = append(argsFine, point)
 
 	}
 
-	fmt.Println("Checkling points",len(argsFine))
+	fmt.Println("Checkling points", len(argsFine))
 
-	rbi := gorbi.NewRBF(args,vals)
+	rbi := gorbi.NewRBF(args, vals)
 	rbiVals := rbi.At(argsFine)
-	best :=floats.Min(rbiVals)
+	best := floats.Min(rbiVals)
 	bestArg := floats.MinIdx(rbiVals)
 
 	fmt.Println("Stuff!")
-	fmt.Println("Evaluated N pts: ",fineSeeds)
-	fmt.Println("Best values was: ",floats.Min(vals))
-	fmt.Println("at argument: ",argsFine[floats.MinIdx(vals)])
-	fmt.Println("Best values is: ",best)
-	fmt.Println("at argument: ",argsFine[bestArg])
-	fmt.Println("Checked the best value and it is:",p.Func(argsFine[bestArg]))
+	fmt.Println("Evaluated N pts: ", fineSeeds)
+	fmt.Println("Best values was: ", floats.Min(vals))
+	fmt.Println("at argument: ", argsFine[floats.MinIdx(vals)])
+	fmt.Println("Best values is: ", best)
+	fmt.Println("at argument: ", argsFine[bestArg])
+	fmt.Println("Checked the best value and it is:", f(argsFine[bestArg]))
 	fmt.Println("Starting fine search")
 	fmt.Println("")
 
 	boundsFine := []bound.Bound{}
 	scale := 0.3
-	cent :=argsFine[bestArg]
+	cent := argsFine[bestArg]
 
 	for i, _ := range coarse.Seeds {
 		span := math.Abs(coarse.Bounds[i*2] - coarse.Bounds[i*2+1])
@@ -166,17 +155,17 @@ func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSett
 		boundsFine = append(boundsFine, bound.Bound{min, max})
 	}
 
-	fmt.Println("Bounds:",boundsFine)
+	fmt.Println("Bounds:", boundsFine)
 
 	dFines := makeUniformGrid(boundsFine, coarse.Seeds)
-	for range maths.Linspace(0.,.1,nPts){
-		point := dFines.Rand([]float64{0.,0.0})
+	for range maths.Linspace(0., .1, coarse.NPts) {
+		point := dFines.Rand([]float64{0., 0.0})
 		args = append(args, point)
-		vals = append(vals,p.Func(point))
+		vals = append(vals, f(point))
 
 	}
 
-	bestFine :=floats.Min(vals)
+	bestFine := floats.Min(vals)
 	bestArgFine := floats.MinIdx(vals)
 	bestFinePos := args[bestArgFine]
 
@@ -186,30 +175,9 @@ func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSett
 
 
 
-//	newPoint := argsFine[bestArg]
-//	for range nLooks{
-//		newValue := p.Func(newPoint)
-//		args = append(args,newPoint)
-//		vals = append(vals,newValue)
-//
-//		rbi := gorbi.NewRBF(args,vals)
-//
-//		rbiVals := rbi.At(argsFine)
-//		bestArg := floats.MinIdx(rbiVals)
-//		newPoint =  argsFine[bestArg]
-//		fmt.Println("Best value is: ",floats.Min(rbiVals))
-//		fmt.Println("With arg: ",newPoint)
-//
-//	}
-
-
-
 	return argsFine[bestArg]
 
-
-
 }
-
 
 type UniformGrid struct {
 	Bounds []bound.Bound
@@ -229,7 +197,6 @@ func (n *UniformGrid) Rand(x []float64) []float64 {
 	if x == nil {
 		return x
 	}
-
 
 	if n.curpoint >= len(n.grid) {
 		return nil
@@ -254,7 +221,7 @@ func (n *UniformGrid) makeGrid() {
 
 	grid := gridPts
 	pts := meshgrid.Multiple(grid)
-	fmt.Println("Grid: ",gridPts)
+	//fmt.Println("Grid: ",gridPts)
 
 	n.grid = pts
 }

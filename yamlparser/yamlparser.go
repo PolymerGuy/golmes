@@ -138,12 +138,20 @@ func (data YamlData) NewOptimizerMethod() optimize.Method {
 type CoarseSearchSettings struct {
 	Seeds  []int
 	Bounds []float64
+	NPts   int
 }
 
 func (yamlData YamlData) NewCoarseSearch() CoarseSearchSettings {
+	nPts := 1
+	for _, seed := range stringSliceToIntSlice(yamlData.SolverSettings.CoarseSearch.Seed) {
+		nPts *= seed
+	}
+
+
 	coarseSearch := CoarseSearchSettings{
 		Seeds:  stringSliceToIntSlice(yamlData.SolverSettings.CoarseSearch.Seed),
 		Bounds: stringSliceToFloatSlice(yamlData.SolverSettings.CoarseSearch.Limits),
+		NPts:   nPts,
 	}
 	return coarseSearch
 
