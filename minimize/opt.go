@@ -38,7 +38,7 @@ type OptimizationJob struct {
 	Settings          optimize.Settings
 }
 
-func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSettings) []float64 {
+func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSettings) ([]float64,error) {
 	args := [][]float64{}
 	vals := []float64{}
 	bestArg := []float64{}
@@ -114,7 +114,7 @@ func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSett
 
 	}
 
-	return bestArg
+	return bestArg,nil
 
 }
 

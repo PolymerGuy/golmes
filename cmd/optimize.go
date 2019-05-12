@@ -27,13 +27,16 @@ func optimize(c *cli.Context) {
 
 		file, err := ioutil.ReadFile(yamlFileName)
 		if err != nil {
-			log.Println(err)
+			log.Fatal(err)
 		}
 		coarseSeach, optJob := optJobFromYAML(file)
 
-		coarseSearch := minimize.CoarseSearchSurf(optJob, coarseSeach)
+		coarseResults ,err := minimize.CoarseSearchSurf(optJob, coarseSeach)
+		if err!= nil{
+			log.Println(err)
+		}
 
-		optJob.InitialParameters = coarseSearch
+		optJob.InitialParameters = coarseResults
 		log.Println("Snip here...")
 
 		res, err := minimize.FindFunctionMinima(optJob)
