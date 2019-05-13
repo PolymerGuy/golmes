@@ -29,14 +29,14 @@ func optimize(c *cli.Context) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		coarseSeach, optJob,err := optJobFromYAML(file)
+		coarseSeach, optJob, err := optJobFromYAML(file)
 
-		if err != nil{
+		if err != nil {
 			log.Fatal(err)
 		}
 
-		if coarseSeach != nil{
-			for _,task := range coarseSeach {
+		if coarseSeach != nil {
+			for _, task := range coarseSeach {
 				// Do a response surface naive search
 				coarseResults, err := minimize.CoarseSearchSurf(optJob, task)
 				if err != nil {
@@ -49,8 +49,6 @@ func optimize(c *cli.Context) {
 			}
 		}
 
-
-
 		// Do a fine search
 		res, err := minimize.FindFunctionMinima(optJob)
 		if err != nil {
@@ -62,10 +60,9 @@ func optimize(c *cli.Context) {
 	}
 }
 
-func optJobFromYAML(yamlFile []byte) ([]yamlparser.CoarseSearchSettings, minimize.OptimizationJob,error) {
+func optJobFromYAML(yamlFile []byte) ([]yamlparser.CoarseSearchSettings, minimize.OptimizationJob, error) {
 	parser := yamlparser.Parse(yamlFile)
 	coarseSearchs := []yamlparser.CoarseSearchSettings{}
-
 
 	//TODO: Remove list of comparators. This should be impossible...
 	comparator := parser.NewComparator()[0]
@@ -75,8 +72,7 @@ func optJobFromYAML(yamlFile []byte) ([]yamlparser.CoarseSearchSettings, minimiz
 	settings := parser.NewOptimizerSettings()
 	coarseSearch := parser.NewCoarseSearch()
 
-	coarseSearchs = append(coarseSearchs,coarseSearch)
-
+	coarseSearchs = append(coarseSearchs, coarseSearch)
 
 	optJob := minimize.OptimizationJob{
 		InitialParameters: costFunction.InitialParameters,
@@ -84,5 +80,5 @@ func optJobFromYAML(yamlFile []byte) ([]yamlparser.CoarseSearchSettings, minimiz
 		CostFunc:          costFunction,
 		Settings:          settings,
 	}
-	return coarseSearchs, optJob,nil
+	return coarseSearchs, optJob, nil
 }

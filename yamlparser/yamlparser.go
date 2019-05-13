@@ -128,8 +128,7 @@ type CoarseSearchSettings struct {
 	Seeds      []int
 	Bounds     []float64
 	NPts       int
-	Scales     int
-	Refinement float64
+	Refinement []float64
 }
 
 func (yamlData YamlData) NewCoarseSearch() CoarseSearchSettings {
@@ -138,17 +137,13 @@ func (yamlData YamlData) NewCoarseSearch() CoarseSearchSettings {
 		nPts *= seed
 	}
 
-	scales := yamlData.SolverSettings.CoarseSearch.Scales[0]
 
-
-	refinement := yamlData.SolverSettings.CoarseSearch.Refinement[0]
-
+	refinement := yamlData.SolverSettings.CoarseSearch.Refinement
 
 	coarseSearch := CoarseSearchSettings{
 		Seeds:      stringSliceToIntSlice(yamlData.SolverSettings.CoarseSearch.Seed),
 		Bounds:     stringSliceToFloatSlice(yamlData.SolverSettings.CoarseSearch.Limits),
 		NPts:       nPts,
-		Scales:     scales,
 		Refinement: refinement,
 	}
 	return coarseSearch

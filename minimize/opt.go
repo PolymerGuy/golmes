@@ -38,20 +38,17 @@ type OptimizationJob struct {
 	Settings          optimize.Settings
 }
 
-func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSettings) ([]float64,error) {
+func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSettings) ([]float64, error) {
 	args := [][]float64{}
 	vals := []float64{}
 	bestArg := []float64{}
 
 	nDims := len(coarse.Seeds)
 
-
-
 	fineSearchUpsampling := 50
 	d := makeUniformGrid(coarse.Bounds, coarse.Seeds)
 
-	for i:=0;i<coarse.Scales;i++ {
-
+	for _, refinement := range coarse.Refinement{
 		// Evaluate all points on the grid and store args and values
 		for range maths.Linspace(0., .1, coarse.NPts) {
 			dummyArg := make([]float64, nDims)
@@ -67,7 +64,7 @@ func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSett
 			fineSeeds = append(fineSeeds, seed*fineSearchUpsampling)
 		}
 		dFine := makeUniformGrid(coarse.Bounds, fineSeeds)
-		nPtsFine := coarse.NPts * int(math.Pow(float64(fineSearchUpsampling),float64(nDims)))
+		nPtsFine := coarse.NPts * int(math.Pow(float64(fineSearchUpsampling), float64(nDims)))
 
 		argsFine := [][]float64{}
 		for range maths.Linspace(0., .1, nPtsFine) {
@@ -80,8 +77,8 @@ func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSett
 		fmt.Println("Checkling points", len(argsFine))
 		fmt.Println("Checkling points", nPtsFine)
 
-		rbi,err := gorbi.NewRBF(args, vals)
-		if err != nil{
+		rbi, err := gorbi.NewRBF(args, vals)
+		if err != nil {
 			log.Fatal(err)
 		}
 
@@ -89,18 +86,16 @@ func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSett
 		best := floats.Min(rbiVals)
 		bestArg = argsFine[floats.MinIdx(rbiVals)]
 
-		fmt.Println("Beste values is:",best)
-		fmt.Println("found at:",bestArg)
-
-
+		fmt.Println("Beste values is:", best)
+		fmt.Println("found at:", bestArg)
 
 		boundsFine := []float64{}
 		cent := bestArg
 
 		for i, _ := range coarse.Seeds {
 			span := math.Abs(coarse.Bounds[i*2] - coarse.Bounds[i*2+1])
-			min := cent[i] - span*coarse.Refinement/2.
-			max := cent[i] + span*coarse.Refinement/2.
+			min := cent[i] - span* refinement /2.
+			max := cent[i] + span* refinement /2.
 
 			boundsFine = append(boundsFine, min, max)
 		}
@@ -109,14 +104,9 @@ func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSett
 
 		d = makeUniformGrid(boundsFine, coarse.Seeds)
 
-
-
-
-
-
 	}
 
-	return bestArg,nil
+	return bestArg, nil
 
 }
 
