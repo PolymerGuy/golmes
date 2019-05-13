@@ -53,6 +53,7 @@ func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSett
 
 	for i:=0;i<nScales;i++ {
 
+		// Evaluate all points on the grid and store args and values
 		for range maths.Linspace(0., .1, coarse.NPts) {
 			dummyArg := make([]float64, nDims)
 			point := d.Rand(dummyArg)
@@ -61,11 +62,11 @@ func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSett
 
 		}
 
+		// Make a finer grid on which the interpolation wil be evaluated
 		fineSeeds := []int{}
 		for _, seed := range coarse.Seeds {
 			fineSeeds = append(fineSeeds, seed*fineSearchUpsampling)
 		}
-
 		dFine := makeUniformGrid(coarse.Bounds, fineSeeds)
 		nPtsFine := coarse.NPts * int(math.Pow(float64(fineSearchUpsampling),float64(nDims)))
 
@@ -73,7 +74,6 @@ func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSett
 		for range maths.Linspace(0., .1, nPtsFine) {
 			dummyArg := make([]float64, nDims)
 			point := dFine.Rand(dummyArg)
-
 			argsFine = append(argsFine, point)
 
 		}
@@ -81,7 +81,10 @@ func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSett
 		fmt.Println("Checkling points", len(argsFine))
 		fmt.Println("Checkling points", nPtsFine)
 
-		rbi := gorbi.NewRBF(args, vals)
+		rbi,err := gorbi.NewRBF(args, vals)
+		if err != nil{
+			log.Fatal(err)
+		}
 
 		rbiVals := rbi.At(argsFine)
 		best := floats.Min(rbiVals)
