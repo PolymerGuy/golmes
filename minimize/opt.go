@@ -46,12 +46,11 @@ func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSett
 	nDims := len(coarse.Seeds)
 
 
-	nScales := 3
-	refinementFactor := 0.1
+
 	fineSearchUpsampling := 50
 	d := makeUniformGrid(coarse.Bounds, coarse.Seeds)
 
-	for i:=0;i<nScales;i++ {
+	for i:=0;i<coarse.Scales;i++ {
 
 		// Evaluate all points on the grid and store args and values
 		for range maths.Linspace(0., .1, coarse.NPts) {
@@ -100,8 +99,8 @@ func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSett
 
 		for i, _ := range coarse.Seeds {
 			span := math.Abs(coarse.Bounds[i*2] - coarse.Bounds[i*2+1])
-			min := cent[i] - span*refinementFactor/2.
-			max := cent[i] + span*refinementFactor/2.
+			min := cent[i] - span*coarse.Refinement/2.
+			max := cent[i] + span*coarse.Refinement/2.
 
 			boundsFine = append(boundsFine, min, max)
 		}

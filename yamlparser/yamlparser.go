@@ -32,12 +32,14 @@ type SolverSet struct {
 	Method       string
 	Threshold    float64
 	Evaluations  int
-	CoarseSearch CoarseSeach `coarsesearch`
+	CoarseSearch CoarseSearch `coarsesearch`
 }
 
-type CoarseSeach struct {
-	Seed   []string
-	Limits []string
+type CoarseSearch struct {
+	Seed       []string
+	Limits     []string
+	Scales     []int
+	Refinement []float64
 }
 
 type YamlData struct {
@@ -109,19 +111,6 @@ func MakeComparator(settings DataComparators) data.PairWithArgs {
 
 }
 
-func MakeComparatorCurPath(settings DataComparators, curData data.SerieWithArgs) data.PairWithArgs {
-
-	refStrain := data.NewSeriesFromFile(settings.Referencefile, settings.Keywords[0])
-
-	refStress := data.NewSeriesFromFile(settings.Referencefile, settings.Keywords[1])
-
-	refData := data.NewSeriesWithArgs(refStrain, refStress)
-
-	// TODO: Remove refData as default args!
-	return data.NewPairWithArgs(refData, curData, refStrain)
-
-}
-
 func (data YamlData) NewOptimizerMethod() optimize.Method {
 	method := lowerCaseWithoutSeps(data.SolverSettings.Method)
 	switch method {
@@ -136,9 +125,11 @@ func (data YamlData) NewOptimizerMethod() optimize.Method {
 }
 
 type CoarseSearchSettings struct {
-	Seeds  []int
-	Bounds []float64
-	NPts   int
+	Seeds      []int
+	Bounds     []float64
+	NPts       int
+	Scales     int
+	Refinement float64
 }
 
 func (yamlData YamlData) NewCoarseSearch() CoarseSearchSettings {
@@ -147,11 +138,18 @@ func (yamlData YamlData) NewCoarseSearch() CoarseSearchSettings {
 		nPts *= seed
 	}
 
+	scales := yamlData.SolverSettings.CoarseSearch.Scales[0]
+
+
+	refinement := yamlData.SolverSettings.CoarseSearch.Refinement[0]
+
 
 	coarseSearch := CoarseSearchSettings{
-		Seeds:  stringSliceToIntSlice(yamlData.SolverSettings.CoarseSearch.Seed),
-		Bounds: stringSliceToFloatSlice(yamlData.SolverSettings.CoarseSearch.Limits),
-		NPts:   nPts,
+		Seeds:      stringSliceToIntSlice(yamlData.SolverSettings.CoarseSearch.Seed),
+		Bounds:     stringSliceToFloatSlice(yamlData.SolverSettings.CoarseSearch.Limits),
+		NPts:       nPts,
+		Scales:     scales,
+		Refinement: refinement,
 	}
 	return coarseSearch
 

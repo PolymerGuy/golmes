@@ -9,6 +9,11 @@ Solver_settings:
     limits:
       - 5.1 9.2
       - 2.3 5.1
+    scales:
+      - 1
+    refinement:
+      - 0.5
+
 
 Abaqus_settings:
   path: ./examples/dummyApp/abq
