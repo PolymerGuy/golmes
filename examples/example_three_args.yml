@@ -6,31 +6,35 @@ Solver_settings:
     seed:
       - 7
       - 7
+      - 3
     limits:
       - 5.1 9.2
       - 2.3 4.1
+      - 0. 2.
 
 Abaqus_settings:
-  path: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummyApp/abq
-  inputfile: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummyApp/inputfile.txt
+  path: ./examples/dummyApp/abq
+  inputfile: ./examples/dummyApp/inputfile_3arg.txt
   keywords:
     - val1
     - val2
+    - val3
   initial_parameters:
     - 8
     - 3
+    - 0.5
 
 
 DataComparators:
   - type: synced
-    referencefile: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummydata/data.csv
-    currentfile : /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummyApp/inputfile_iter_res.txt
+    referencefile: ./examples/dummydata/data.csv
+    currentfile : ./examples/dummyApp/inputfile_iter_res.txt
     commonargsfile :
     keywords:
       - strain
       - stress
 
-Work_directory: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/work/
+Work_directory: ./examples/work/
 
 
 

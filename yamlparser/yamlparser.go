@@ -32,12 +32,14 @@ type SolverSet struct {
 	Method       string
 	Threshold    float64
 	Evaluations  int
-	CoarseSearch CoarseSeach `coarsesearch`
+	CoarseSearch CoarseSearch `coarsesearch`
 }
 
-type CoarseSeach struct {
-	Seed   []string
-	Limits []string
+type CoarseSearch struct {
+	Seed       []string
+	Limits     []string
+	Scales     []int
+	Refinement []float64
 }
 
 type YamlData struct {
@@ -53,6 +55,7 @@ func Parse(yamlData []byte) YamlData {
 	err := yaml.Unmarshal(yamlData, &template)
 
 	if err != nil {
+		log.Println("Could not marshall the file")
 		log.Fatalf("Unable to unmarshal data: %v", err)
 	}
 
@@ -109,19 +112,6 @@ func MakeComparator(settings DataComparators) data.PairWithArgs {
 
 }
 
-func MakeComparatorCurPath(settings DataComparators, curData data.SerieWithArgs) data.PairWithArgs {
-
-	refStrain := data.NewSeriesFromFile(settings.Referencefile, settings.Keywords[0])
-
-	refStress := data.NewSeriesFromFile(settings.Referencefile, settings.Keywords[1])
-
-	refData := data.NewSeriesWithArgs(refStrain, refStress)
-
-	// TODO: Remove refData as default args!
-	return data.NewPairWithArgs(refData, curData, refStrain)
-
-}
-
 func (data YamlData) NewOptimizerMethod() optimize.Method {
 	method := lowerCaseWithoutSeps(data.SolverSettings.Method)
 	switch method {
@@ -136,14 +126,26 @@ func (data YamlData) NewOptimizerMethod() optimize.Method {
 }
 
 type CoarseSearchSettings struct {
-	Seeds  []int
-	Bounds []float64
+	Seeds      []int
+	Bounds     []float64
+	NPts       int
+	Refinement []float64
 }
 
 func (yamlData YamlData) NewCoarseSearch() CoarseSearchSettings {
+	nPts := 1
+	for _, seed := range stringSliceToIntSlice(yamlData.SolverSettings.CoarseSearch.Seed) {
+		nPts *= seed
+	}
+
+
+	refinement := yamlData.SolverSettings.CoarseSearch.Refinement
+
 	coarseSearch := CoarseSearchSettings{
-		Seeds:  stringSliceToIntSlice(yamlData.SolverSettings.CoarseSearch.Seed),
-		Bounds: stringSliceToFloatSlice(yamlData.SolverSettings.CoarseSearch.Limits),
+		Seeds:      stringSliceToIntSlice(yamlData.SolverSettings.CoarseSearch.Seed),
+		Bounds:     stringSliceToFloatSlice(yamlData.SolverSettings.CoarseSearch.Limits),
+		NPts:       nPts,
+		Refinement: refinement,
 	}
 	return coarseSearch
 

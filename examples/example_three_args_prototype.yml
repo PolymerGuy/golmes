@@ -1,0 +1,62 @@
+Work_directory: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/work/
+
+Solution_approach:
+  initial_parameters:
+    - 8
+    - 3
+    - 0.5
+  - gridsearch:
+    seed:
+      - 7
+      - 7
+      - 3
+    limits:
+      - 5.1 9.2
+      - 2.3 4.1
+      - 0. 2.
+
+  - gridsearch:
+    seed:
+      - 7
+      - 7
+      - 3
+    limits:
+      - 5.1 9.2
+      - 2.3 4.1
+      - 0. 2.
+
+  - finesearch:
+    method: Nelder-Mead
+    threshold: 1e-2
+    maxEvals: 50
+
+
+Application:
+  exec: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummyApp/abq
+  template: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummyApp/inputfile_3arg.txt
+  keywords:
+    - val1
+    - val2
+    - val3
+
+CostFunction:
+  - type: rms
+    weight : 1.0
+    referencefile: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummydata/data.csv
+    currentfile : /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummyApp/inputfile_iter_res.txt
+    keywords:
+      - strain
+      - stress
+  - type: rms
+    weight: 0.5
+    referencefile: /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummydata/data.csv
+    currentfile : /home/sindreno/go/src/github.com/PolymerGuy/golmes/examples/dummyApp/inputfile_iter_res.txt
+    keywords:
+      - strain
+      - diameter
+
+
+
+
+
+

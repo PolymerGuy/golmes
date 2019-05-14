@@ -1,25 +1,24 @@
 package minimize
 
 import (
+	"fmt"
 	"github.com/PolymerGuy/golmes/costfunctions"
 	"github.com/PolymerGuy/golmes/maths"
 	"github.com/PolymerGuy/golmes/yamlparser"
+	"github.com/PolymerGuy/gorbi"
 	"github.com/btracey/meshgrid"
 	"gonum.org/v1/gonum/bound"
-	"gonum.org/v1/gonum/diff/fd"
+	"gonum.org/v1/gonum/floats"
 	"gonum.org/v1/gonum/optimize"
 	"log"
-	"os"
-	"time"
+	"math"
 )
 
 func FindFunctionMinima(optJob OptimizationJob) (*optimize.Result, error) {
 
-	grad := gradWrapper{f: optJob.CostFunc.Eval}
-
 	p := optimize.Problem{
 		Func: optJob.CostFunc.Eval,
-		Grad: grad.Gradient,
+		Grad: nil,
 	}
 
 	var method = optJob.Method
@@ -39,61 +38,75 @@ type OptimizationJob struct {
 	Settings          optimize.Settings
 }
 
-type gradWrapper struct {
-	f func([]float64) float64
-}
+func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSettings) ([]float64, error) {
+	args := [][]float64{}
+	vals := []float64{}
+	bestArg := []float64{}
 
-func (g gradWrapper) Gradient(grad []float64, x []float64) {
-	// Compute the first derivative of f at 0 using the default settings.
-	settings := fd.Settings{Step: 0.001}
-	fd.Gradient(grad, g.f, x, &settings)
-}
+	nDims := len(coarse.Seeds)
 
-func CoarseSearch(optJob OptimizationJob, coarse yamlparser.CoarseSearchSettings) (*optimize.Result, error) {
-	log.Println("Initiating coarse search")
+	fineSearchUpsampling := 50
+	d := makeUniformGrid(coarse.Bounds, coarse.Seeds)
 
-	p := optimize.Problem{
-		Func: optJob.CostFunc.Eval,
+	for _, refinement := range coarse.Refinement{
+		// Evaluate all points on the grid and store args and values
+		for range maths.Linspace(0., .1, coarse.NPts) {
+			dummyArg := make([]float64, nDims)
+			point := d.Rand(dummyArg)
+			args = append(args, point)
+			vals = append(vals, optJob.CostFunc.Eval(point))
+
+		}
+
+		// Make a finer grid on which the interpolation wil be evaluated
+		fineSeeds := []int{}
+		for _, seed := range coarse.Seeds {
+			fineSeeds = append(fineSeeds, seed*fineSearchUpsampling)
+		}
+		dFine := makeUniformGrid(coarse.Bounds, fineSeeds)
+		nPtsFine := coarse.NPts * int(math.Pow(float64(fineSearchUpsampling), float64(nDims)))
+
+		argsFine := [][]float64{}
+		for range maths.Linspace(0., .1, nPtsFine) {
+			dummyArg := make([]float64, nDims)
+			point := dFine.Rand(dummyArg)
+			argsFine = append(argsFine, point)
+
+		}
+
+		fmt.Println("Checkling points", len(argsFine))
+		fmt.Println("Checkling points", nPtsFine)
+
+		rbi, err := gorbi.NewRBF(args, vals)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		rbiVals := rbi.At(argsFine)
+		best := floats.Min(rbiVals)
+		bestArg = argsFine[floats.MinIdx(rbiVals)]
+
+		fmt.Println("Beste values is:", best)
+		fmt.Println("found at:", bestArg)
+
+		boundsFine := []float64{}
+		cent := bestArg
+
+		for i, _ := range coarse.Seeds {
+			span := math.Abs(coarse.Bounds[i*2] - coarse.Bounds[i*2+1])
+			min := cent[i] - span* refinement /2.
+			max := cent[i] + span* refinement /2.
+
+			boundsFine = append(boundsFine, min, max)
+		}
+
+		fmt.Println("Bounds:", boundsFine)
+
+		d = makeUniformGrid(boundsFine, coarse.Seeds)
+
 	}
 
-	dim := len(coarse.Seeds)
-
-	log.Println("BOUNDS:", coarse.Bounds)
-	log.Println("Seeds:", coarse.Seeds)
-
-	nPts := 1
-	for _, seed := range coarse.Seeds {
-		nPts *= seed
-	}
-
-	bounds := []bound.Bound{}
-	for i, _ := range coarse.Seeds {
-		bounds = append(bounds, bound.Bound{coarse.Bounds[i*2], coarse.Bounds[i*2+1]})
-	}
-
-	d := UniformGrid{Bounds: bounds, Seeds: coarse.Seeds}
-
-	method := optimize.GuessAndCheck{Rander: &d}
-
-	optJob.Settings.MajorIterations = nPts
-	optJob.Settings.FuncEvaluations = nPts
-	printer := &optimize.Printer{
-		Writer:          os.Stdout,
-		HeadingInterval: 30,
-		ValueInterval:   100 * time.Millisecond,
-	}
-
-	optJob.Settings.Recorder = printer
-	optJob.Settings.Concurrent = 4
-
-	initX := make([]float64, dim)
-
-	res, err := optimize.Minimize(p, initX, &optJob.Settings, &method)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	return res, err
+	return bestArg, nil
 
 }
 
@@ -116,9 +129,12 @@ func (n *UniformGrid) Rand(x []float64) []float64 {
 		return x
 	}
 
+	if n.curpoint >= len(n.grid) {
+		return nil
+	}
+
 	pts = n.grid[n.curpoint]
 	n.curpoint += 1
-	//x=n.grid[n.curpoint]
 	for i, _ := range x {
 		x[i] = pts[i]
 	}
@@ -131,10 +147,25 @@ func (n *UniformGrid) makeGrid() {
 	gridPts := [][]float64{}
 	for i, bound := range n.Bounds {
 		gridPts = append(gridPts, maths.Linspace(bound.Min, bound.Max, n.Seeds[i]))
+
 	}
 
 	grid := gridPts
 	pts := meshgrid.Multiple(grid)
+	//fmt.Println("Grid: ",gridPts)
 
 	n.grid = pts
+}
+
+func makeUniformGrid(bounds []float64, seeds []int) UniformGrid {
+	nPairs := len(bounds) / 2
+
+	boundss := []bound.Bound{}
+	for i := 0; i < nPairs; i++ {
+		boundss = append(boundss, bound.Bound{bounds[i*2], bounds[i*2+1]})
+	}
+
+	return UniformGrid{Bounds: boundss,
+		Seeds:    seeds,
+		curpoint: 0}
 }
