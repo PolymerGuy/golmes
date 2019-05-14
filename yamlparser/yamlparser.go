@@ -55,6 +55,7 @@ func Parse(yamlData []byte) YamlData {
 	err := yaml.Unmarshal(yamlData, &template)
 
 	if err != nil {
+		log.Println("Could not marshall the file")
 		log.Fatalf("Unable to unmarshal data: %v", err)
 	}
 

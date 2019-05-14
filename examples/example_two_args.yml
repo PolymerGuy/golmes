@@ -13,7 +13,7 @@ Solver_settings:
     refinement:
       - 0.5
       - 0.5
-      - 0.2
+
 
     finesearch:
       method: Nelder-Mead
