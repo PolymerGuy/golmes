@@ -1,16 +1,26 @@
+Work_directory: ./examples/work/
+
+
 Solver_settings:
-  method: Nelder-Mead
-  threshold: 1e-2
-  evaluations: 50
+
   coarsesearch:
     seed:
-      - 7
-      - 7
+      - 5
+      - 5
       - 3
     limits:
       - 5.1 9.2
-      - 2.3 4.1
-      - 0. 2.
+      - 2.3 5.1
+      - 0.0 2.0
+    refinement:
+      - 1.0
+      - 0.5
+
+
+    finesearch:
+      method: Nelder-Mead
+      threshold: 1e-2
+      maxEvals: 50
 
 Abaqus_settings:
   path: ./examples/dummyApp/abq
@@ -34,7 +44,9 @@ DataComparators:
       - strain
       - stress
 
-Work_directory: ./examples/work/
+
+
+
 
 
 

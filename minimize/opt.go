@@ -75,8 +75,7 @@ func CoarseSearchSurf(optJob OptimizationJob, coarse yamlparser.CoarseSearchSett
 
 		}
 
-		fmt.Println("Checkling points", len(argsFine))
-		fmt.Println("Checkling points", nPtsFine)
+		fmt.Println("Checking points", nPtsFine)
 
 		rbi, err := gorbi.NewRBF(args, vals)
 		if err != nil {
