@@ -113,6 +113,7 @@ func MakeComparator(settings DataComparators) data.PairWithArgs {
 }
 
 func (data YamlData) NewOptimizerMethod() optimize.Method {
+
 	method := lowerCaseWithoutSeps(data.SolverSettings.Method)
 	switch method {
 	case "neldermead":
@@ -120,6 +121,7 @@ func (data YamlData) NewOptimizerMethod() optimize.Method {
 	case "gradient":
 		return &optimize.GradientDescent{}
 	default:
+		log.Println("Using default fine search method: Nelder Mead")
 		return &optimize.NelderMead{}
 
 	}
@@ -138,12 +140,19 @@ func (yamlData YamlData) NewCoarseSearch() CoarseSearchSettings {
 		nPts *= seed
 	}
 
+	seeds := stringSliceToIntSlice(yamlData.SolverSettings.CoarseSearch.Seed)
+
+	bounds := stringSliceToFloatSlice(yamlData.SolverSettings.CoarseSearch.Limits)
+
+	if len(seeds)*2 != len(bounds) {
+		log.Fatal("The number of seeds should match the number of bounds.")
+	}
 
 	refinement := yamlData.SolverSettings.CoarseSearch.Refinement
 
 	coarseSearch := CoarseSearchSettings{
-		Seeds:      stringSliceToIntSlice(yamlData.SolverSettings.CoarseSearch.Seed),
-		Bounds:     stringSliceToFloatSlice(yamlData.SolverSettings.CoarseSearch.Limits),
+		Seeds:      seeds,
+		Bounds:     bounds,
 		NPts:       nPts,
 		Refinement: refinement,
 	}
