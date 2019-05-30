@@ -28,7 +28,8 @@ func (app CostFunction) Eval(args []float64) float64 {
 	if _, err := os.Stat(app.WorkDirectory); os.IsNotExist(err) {
 		err = os.MkdirAll(app.WorkDirectory, 0755)
 		if err != nil {
-			panic(err)
+			log.Fatal("Could not make main work directory:",err)
+
 		}
 	}
 
@@ -37,15 +38,18 @@ func (app CostFunction) Eval(args []float64) float64 {
 
 	err := os.MkdirAll(curWorkDir, 0755)
 	if err != nil {
-		log.Panic(err)
+		log.Panic("Could not make local work directory", err)
 	}
 
 	inpurFileName, err := fileutils.MakeInputFile(app.InputFileTemplateName, curWorkDir, args, app.ArgKeywords)
-	// Run Abaqus
+	if err != nil {
+		log.Fatal("Could not make input file from template ",err)
+	}
+	// Run application
 
 	err = runApp(app.ExecPath, inpurFileName)
 	if err != nil {
-		log.Fatal("Abaqus failed!")
+		log.Fatal("Running the application failed: ", err)
 	}
 
 	resFileName := strings.TrimSuffix(inpurFileName, ".txt") + "_res.txt"
@@ -58,7 +62,7 @@ func (app CostFunction) Eval(args []float64) float64 {
 
 	res, err := app.Comparator.Compare(curData)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Could not compare data ", err)
 	}
 	log.Println(id, args, res)
 
@@ -69,7 +73,6 @@ func runApp(appPath string, jobName string) error {
 	run := exec.Command(appPath, jobName)
 	err := run.Run()
 	if err != nil {
-		log.Fatal(err)
 		return err
 	}
 	return nil

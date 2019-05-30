@@ -31,6 +31,7 @@ func optimize(c *cli.Context) {
 			log.Fatal(err)
 		}
 		coarseSeach, optJob, err := optJobFromYAML(file)
+		
 
 		if err != nil {
 			log.Fatal(err)
