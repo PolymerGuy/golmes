@@ -1,6 +1,7 @@
 package yamlparser
 
 import (
+	"fmt"
 	"github.com/PolymerGuy/golmes/appwrapper"
 	"log"
 	"strconv"
@@ -113,13 +114,17 @@ func MakeComparator(settings DataComparators) data.PairWithArgs {
 }
 
 func (data YamlData) NewOptimizerMethod() optimize.Method {
+
 	method := lowerCaseWithoutSeps(data.SolverSettings.Method)
+	fmt.Println("Method:",method)
+	fmt.Println("Method:",data.SolverSettings.Method)
 	switch method {
 	case "neldermead":
 		return &optimize.NelderMead{}
 	case "gradient":
 		return &optimize.GradientDescent{}
 	default:
+		log.Println("Using default fine search method: Nelder Mead")
 		return &optimize.NelderMead{}
 
 	}

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/PolymerGuy/golmes/minimize"
 	"github.com/PolymerGuy/golmes/output"
 	"github.com/PolymerGuy/golmes/yamlparser"
@@ -62,6 +63,10 @@ func optimize(c *cli.Context) {
 
 func optJobFromYAML(yamlFile []byte) ([]yamlparser.CoarseSearchSettings, minimize.OptimizationJob, error) {
 	parser := yamlparser.Parse(yamlFile)
+
+	fmt.Println(parser.AbqSettings)
+	fmt.Println(parser.SolverSettings)
+
 	coarseSearchs := []yamlparser.CoarseSearchSettings{}
 
 	//TODO: Remove list of comparators. This should be impossible...
