@@ -1,6 +1,7 @@
 .idea
 /examples/work
 examples/dummyApp/work
+examples/dummyApp/abq
 /_ABQSim/abq
 
 *.log
