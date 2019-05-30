@@ -1,7 +1,6 @@
 package yamlparser
 
 import (
-	"fmt"
 	"github.com/PolymerGuy/golmes/appwrapper"
 	"log"
 	"strconv"
@@ -116,8 +115,6 @@ func MakeComparator(settings DataComparators) data.PairWithArgs {
 func (data YamlData) NewOptimizerMethod() optimize.Method {
 
 	method := lowerCaseWithoutSeps(data.SolverSettings.Method)
-	fmt.Println("Method:",method)
-	fmt.Println("Method:",data.SolverSettings.Method)
 	switch method {
 	case "neldermead":
 		return &optimize.NelderMead{}
@@ -147,11 +144,9 @@ func (yamlData YamlData) NewCoarseSearch() CoarseSearchSettings {
 
 	bounds := stringSliceToFloatSlice(yamlData.SolverSettings.CoarseSearch.Limits)
 
-
-	if len(seeds) * 2 != len(bounds){
+	if len(seeds)*2 != len(bounds) {
 		log.Fatal("The number of seeds should match the number of bounds.")
 	}
-
 
 	refinement := yamlData.SolverSettings.CoarseSearch.Refinement
 
