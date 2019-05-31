@@ -22,41 +22,45 @@ func MakeInputFile(templateFileName string, workdir string, values []float64, pl
 
 	inputFileName = workdir + "/" + filename
 
-	//err := os.MkdirAll(id,0755)
-	//if err != nil{
-	//		log.Panic(err)
-	//	}
-
 	stringArgs := floatsToStrings(values)
-	substituteInFile(templateFileName, inputFileName, placeholders, stringArgs)
+	err := substituteInFile(templateFileName, inputFileName, placeholders, stringArgs)
+	if err!= nil{
+		return inputFileName, errors.New("Could not make the file: "+inputFileName+"\n because: "+err.Error())
+	}
+
 	return inputFileName, nil
 
 }
 
-func substituteInFile(filename string, saveAsFilename string, targets []string, substitutes []string) {
+func substituteInFile(filename string, saveAsFilename string, targets []string, substitutes []string)error {
 	input, err := ioutil.ReadFile(filename)
 	if err != nil {
-		log.Fatalln(err)
+		return errors.New("Could not read the template file: "+err.Error())
 	}
-	output := replaceStrings(input, targets, substitutes)
+
+	output,err := replaceStrings(input, targets, substitutes)
+	if err != nil {
+		return errors.New("Could not replace the keywords in the template file: "+err.Error())
+	}
 
 	err = ioutil.WriteFile(saveAsFilename, output, 0644)
 	if err != nil {
-		log.Fatalln(err)
+		return errors.New("Could not write the input file to disc: "+err.Error())
 
 	}
+	return nil
 }
-func replaceStrings(input []byte, targets []string, substitutes []string) []byte {
+func replaceStrings(input []byte, targets []string, substitutes []string) ([]byte,error) {
 	//TODO: Strange composition of input types?
 	output := input
 
 	for i, target := range targets {
 		if found := bytes.Contains(input, []byte(target)); found != true {
-			log.Fatal("Did not find key in file")
+			return  nil, errors.New("Did not find the key:"+target)
 		}
 		output = bytes.Replace(output, []byte(target), []byte(substitutes[i]), -1)
 	}
-	return output
+	return output, nil
 
 }
 
