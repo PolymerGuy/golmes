@@ -10,29 +10,31 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
 )
 
-func MakeInputFile(templateFileName string, workdir string, values []float64, placeholders []string) (string, error) {
+func MakeInputFile(templateFileName string, workdir string, argumentValues []float64, placeholders []string) (string, error) {
 	filename := filepath.Base(templateFileName)
 
-	inputFileName := workdir + "/" + strings.TrimSuffix(filename, ".txt") + "_iter.txt"
+	inputFileName := strings.TrimSuffix(filename, ".txt") + "_iter.txt"
 
-	inputFileName = workdir + "/" + filename
+	inputFilePath := path.Join(workdir, inputFileName)
+	
+	stringArgs := floatsToStrings(argumentValues)
 
-	stringArgs := floatsToStrings(values)
-	err := substituteInFile(templateFileName, inputFileName, placeholders, stringArgs)
+	err := makeFileFromTemplate(templateFileName, inputFilePath, placeholders, stringArgs)
 	if err!= nil{
-		return inputFileName, errors.New("Could not make the file: "+inputFileName+"\n because: "+err.Error())
+		return inputFilePath, errors.New("Could not make the file: "+ inputFilePath +"\n because: "+err.Error())
 	}
 
-	return inputFileName, nil
+	return inputFilePath, nil
 
 }
 
-func substituteInFile(filename string, saveAsFilename string, targets []string, substitutes []string)error {
+func makeFileFromTemplate(filename string, saveAsFilename string, targets []string, substitutes []string)error {
 	input, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return errors.New("Could not read the template file: "+err.Error())
