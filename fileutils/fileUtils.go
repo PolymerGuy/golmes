@@ -11,54 +11,53 @@ import (
 	"log"
 	"os"
 	"path"
-	"path/filepath"
 	"strconv"
 	"strings"
 )
 
-func MakeInputFile(templateFileName string, workdir string, argumentValues []float64, placeholders []string) (string, error) {
-	filename := filepath.Base(templateFileName)
+func MakeInputFile(templateFileName string, workdir string, values []float64, placeholders []string) (string, error) {
+	filename := path.Base(templateFileName)
 
 	inputFileName := strings.TrimSuffix(filename, ".txt") + "_iter.txt"
 
 	inputFilePath := path.Join(workdir, inputFileName)
-	
-	stringArgs := floatsToStrings(argumentValues)
 
-	err := makeFileFromTemplate(templateFileName, inputFilePath, placeholders, stringArgs)
-	if err!= nil{
-		return inputFilePath, errors.New("Could not make the file: "+ inputFilePath +"\n because: "+err.Error())
+	valueStrings := floatsToStrings(values)
+
+	err := makeInputFileFromTemplate(templateFileName, inputFilePath, placeholders, valueStrings)
+	if err != nil {
+		return inputFilePath, errors.New("Could not make the file: " + inputFilePath + "\n because: " + err.Error())
 	}
 
 	return inputFilePath, nil
 
 }
 
-func makeFileFromTemplate(filename string, saveAsFilename string, targets []string, substitutes []string)error {
-	input, err := ioutil.ReadFile(filename)
+func makeInputFileFromTemplate(templateFilePath string, saveAs string, placeholders []string, substitutes []string) error {
+	input, err := ioutil.ReadFile(templateFilePath)
 	if err != nil {
-		return errors.New("Could not read the template file: "+err.Error())
+		return errors.New("Could not read the template file: " + err.Error())
 	}
 
-	output,err := replaceStrings(input, targets, substitutes)
+	output, err := replaceStrings(input, placeholders, substitutes)
 	if err != nil {
-		return errors.New("Could not replace the keywords in the template file: "+err.Error())
+		return errors.New("Could not replace the keywords in the template file: " + err.Error())
 	}
 
-	err = ioutil.WriteFile(saveAsFilename, output, 0644)
+	err = ioutil.WriteFile(saveAs, output, 0644)
 	if err != nil {
-		return errors.New("Could not write the input file to disc: "+err.Error())
+		return errors.New("Could not write the input file to disc: " + err.Error())
 
 	}
 	return nil
 }
-func replaceStrings(input []byte, targets []string, substitutes []string) ([]byte,error) {
+func replaceStrings(input []byte, targets []string, substitutes []string) ([]byte, error) {
 	//TODO: Strange composition of input types?
 	output := input
 
 	for i, target := range targets {
 		if found := bytes.Contains(input, []byte(target)); found != true {
-			return  nil, errors.New("Did not find the key:"+target)
+			return nil, errors.New("Did not find the key:" + target)
 		}
 		output = bytes.Replace(output, []byte(target), []byte(substitutes[i]), -1)
 	}
