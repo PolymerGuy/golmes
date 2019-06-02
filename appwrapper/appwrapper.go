@@ -11,7 +11,12 @@ import (
 	"strings"
 )
 
-type CostFunction struct {
+type CostFunction interface {
+	Eval(args []float64) float64
+}
+
+
+type AppWrapper struct {
 	ExecPath              string
 	InputFileTemplateName string
 	WorkDirectory         string
@@ -22,7 +27,7 @@ type CostFunction struct {
 	Comparator            data.Comparator
 }
 
-func (app CostFunction) Eval(args []float64) float64 {
+func (app AppWrapper) Eval(args []float64) float64 {
 	// Implements the costFunction interface
 	// Generate input file with args
 

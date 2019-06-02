@@ -71,9 +71,9 @@ func (yamlData YamlData) NewComparator() []data.PairWithArgs {
 	}
 	return comparators
 }
-func (yamlData YamlData) NewCostFunction() appwrapper.CostFunction {
+func (yamlData YamlData) NewCostFunction() appwrapper.AppWrapper {
 
-	costFunction := appwrapper.CostFunction{
+	costFunction := appwrapper.AppWrapper{
 		ExecPath:              yamlData.AbqSettings.Path,
 		InputFileTemplateName: yamlData.AbqSettings.Inputfile,
 		WorkDirectory:         yamlData.WorkDir,

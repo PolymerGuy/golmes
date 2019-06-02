@@ -2,7 +2,7 @@ package minimize
 
 import (
 	"fmt"
-	"github.com/PolymerGuy/golmes/costfunctions"
+	"github.com/PolymerGuy/golmes/appwrapper"
 	"github.com/PolymerGuy/golmes/maths"
 	"github.com/PolymerGuy/golmes/yamlparser"
 	"github.com/PolymerGuy/gorbi"
@@ -32,7 +32,7 @@ func FindFunctionMinima(optJob OptimizationJob) (*optimize.Result, error) {
 }
 
 type OptimizationJob struct {
-	CostFunc          costfunctions.CostFunction
+	CostFunc          appwrapper.CostFunction
 	Method            optimize.Method
 	InitialParameters []float64
 	Settings          optimize.Settings
