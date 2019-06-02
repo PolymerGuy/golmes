@@ -80,7 +80,8 @@ func (pair PairWithArgs) GetFields() []DataReaderWithArgs {
 }
 
 func (series DataFromFile) Read() []float64 {
-	return fileutils.GetKeyFromCSVFile(series.fileName, series.key)
+
+	return fileutils.GetColumnFromCSVFile(series.fileName, series.key)
 }
 
 func (series Serie) Read() []float64 {

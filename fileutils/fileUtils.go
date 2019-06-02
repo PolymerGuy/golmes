@@ -51,11 +51,10 @@ func makeInputFileFromTemplate(templateFilePath string, saveAs string, placehold
 	}
 	return nil
 }
-func replaceWords(input []byte, targets []string, substitutes []string) ([]byte, error) {
-	//TODO: Strange composition of input types?
+func replaceWords(input []byte, placeholders []string, substitutes []string) ([]byte, error) {
 	output := input
 
-	for i, target := range targets {
+	for i, target := range placeholders {
 		if found := bytes.Contains(input, []byte(target)); found != true {
 			return nil, errors.New("Did not find the key:" + target)
 		}
@@ -74,7 +73,10 @@ func floatsToStrings(floatList []float64) []string {
 	return stringList
 }
 
-func GetKeyFromCSVFile(fileName string, key string) []float64 {
+
+
+
+func GetColumnFromCSVFile(fileName string, columnName string) []float64 {
 
 	csvFile, err := os.Open(fileName)
 	if err != nil {
@@ -87,14 +89,14 @@ func GetKeyFromCSVFile(fileName string, key string) []float64 {
 	if err != nil {
 		log.Fatalf("Reading from file did not work: %s", err)
 	}
-	ind, err := findWordInd(line, key)
-	// Check if key was found
+	ind, err := findWordInd(line, columnName)
+	// Check if columnName was found
 	if err != nil {
-		log.Fatalf("Did not find key. %s", err)
+		log.Fatalf("Did not find columnName. %s", err)
 	}
 	row, err := floatsColumn(reader, ind)
 	if err != nil {
-		log.Fatalf("Did not find key. %s", err)
+		log.Fatalf("Did not find columnName. %s", err)
 	}
 
 	return row
