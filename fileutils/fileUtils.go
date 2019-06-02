@@ -34,24 +34,24 @@ func MakeInputFile(templateFileName string, workdir string, values []float64, pl
 }
 
 func makeInputFileFromTemplate(templateFilePath string, saveAs string, placeholders []string, substitutes []string) error {
-	input, err := ioutil.ReadFile(templateFilePath)
+	template, err := ioutil.ReadFile(templateFilePath)
 	if err != nil {
 		return errors.New("Could not read the template file: " + err.Error())
 	}
 
-	output, err := replaceStrings(input, placeholders, substitutes)
+	templateUpdated, err := replaceWords(template, placeholders, substitutes)
 	if err != nil {
 		return errors.New("Could not replace the keywords in the template file: " + err.Error())
 	}
 
-	err = ioutil.WriteFile(saveAs, output, 0644)
+	err = ioutil.WriteFile(saveAs, templateUpdated, 0644)
 	if err != nil {
-		return errors.New("Could not write the input file to disc: " + err.Error())
+		return errors.New("Could not write the template file to disc: " + err.Error())
 
 	}
 	return nil
 }
-func replaceStrings(input []byte, targets []string, substitutes []string) ([]byte, error) {
+func replaceWords(input []byte, targets []string, substitutes []string) ([]byte, error) {
 	//TODO: Strange composition of input types?
 	output := input
 
