@@ -10,53 +10,57 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"path/filepath"
+	"path"
 	"strconv"
 	"strings"
 )
 
 func MakeInputFile(templateFileName string, workdir string, values []float64, placeholders []string) (string, error) {
-	filename := filepath.Base(templateFileName)
+	filename := path.Base(templateFileName)
 
-	inputFileName := workdir + "/" + strings.TrimSuffix(filename, ".txt") + "_iter.txt"
+	inputFileName := strings.TrimSuffix(filename, ".txt") + "_iter.txt"
 
-	inputFileName = workdir + "/" + filename
+	inputFilePath := path.Join(workdir, inputFileName)
 
-	//err := os.MkdirAll(id,0755)
-	//if err != nil{
-	//		log.Panic(err)
-	//	}
+	valueStrings := floatsToStrings(values)
 
-	stringArgs := floatsToStrings(values)
-	substituteInFile(templateFileName, inputFileName, placeholders, stringArgs)
-	return inputFileName, nil
+	err := makeInputFileFromTemplate(templateFileName, inputFilePath, placeholders, valueStrings)
+	if err != nil {
+		return inputFilePath, errors.New("Could not make the file: " + inputFilePath + "\n because: " + err.Error())
+	}
+
+	return inputFilePath, nil
 
 }
 
-func substituteInFile(filename string, saveAsFilename string, targets []string, substitutes []string) {
-	input, err := ioutil.ReadFile(filename)
+func makeInputFileFromTemplate(templateFilePath string, saveAs string, placeholders []string, substitutes []string) error {
+	template, err := ioutil.ReadFile(templateFilePath)
 	if err != nil {
-		log.Fatalln(err)
+		return errors.New("Could not read the template file: " + err.Error())
 	}
-	output := replaceStrings(input, targets, substitutes)
 
-	err = ioutil.WriteFile(saveAsFilename, output, 0644)
+	templateUpdated, err := replaceWords(template, placeholders, substitutes)
 	if err != nil {
-		log.Fatalln(err)
+		return errors.New("Could not replace the keywords in the template file: " + err.Error())
+	}
+
+	err = ioutil.WriteFile(saveAs, templateUpdated, 0644)
+	if err != nil {
+		return errors.New("Could not write the template file to disc: " + err.Error())
 
 	}
+	return nil
 }
-func replaceStrings(input []byte, targets []string, substitutes []string) []byte {
-	//TODO: Strange composition of input types?
+func replaceWords(input []byte, placeholders []string, substitutes []string) ([]byte, error) {
 	output := input
 
-	for i, target := range targets {
+	for i, target := range placeholders {
 		if found := bytes.Contains(input, []byte(target)); found != true {
-			log.Fatal("Did not find key in file")
+			return nil, errors.New("Did not find the key:" + target)
 		}
 		output = bytes.Replace(output, []byte(target), []byte(substitutes[i]), -1)
 	}
-	return output
+	return output, nil
 
 }
 
@@ -69,7 +73,10 @@ func floatsToStrings(floatList []float64) []string {
 	return stringList
 }
 
-func GetKeyFromCSVFile(fileName string, key string) []float64 {
+
+
+
+func GetColumnFromCSVFile(fileName string, columnName string) []float64 {
 
 	csvFile, err := os.Open(fileName)
 	if err != nil {
@@ -82,14 +89,14 @@ func GetKeyFromCSVFile(fileName string, key string) []float64 {
 	if err != nil {
 		log.Fatalf("Reading from file did not work: %s", err)
 	}
-	ind, err := findWordInd(line, key)
-	// Check if key was found
+	ind, err := findWordInd(line, columnName)
+	// Check if columnName was found
 	if err != nil {
-		log.Fatalf("Did not find key. %s", err)
+		log.Fatalf("Did not find columnName. %s", err)
 	}
 	row, err := floatsColumn(reader, ind)
 	if err != nil {
-		log.Fatalf("Did not find key. %s", err)
+		log.Fatalf("Did not find columnName. %s", err)
 	}
 
 	return row
