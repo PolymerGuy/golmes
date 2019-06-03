@@ -1,13 +1,3 @@
-<!--
-*** Thanks for checking out this README Template. If you have a suggestion that would
-*** make this better please fork the repo and create a pull request or simple open
-*** an issue with the tag "enhancement".
-*** Thanks again! Now go create something AMAZING! :D
--->
-
-
-
-
 
 <!-- PROJECT SHIELDS -->
 [![MIT License][license-shield]][license-url]
@@ -27,7 +17,7 @@
   <h3 align="center">Golmes</h3>
 
   <p align="center">
-    Multi variate optimization made easy
+    A simple tool for multi-variate optimization
     <br />
     <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
     <br />
@@ -67,21 +57,20 @@ This code has very rough edges at the moment and is not ready for use in the cur
 ## About The Project
 
 ![Use](./docs/use.png)
+When you wish to find the input parameters that makes simulation respond in a certain way, this tool may help you.
 
-This tool can be used for parametric optimization via any software that supports inpufiles. We do this by first identifying keywords in a template file which will be
-replaced by the arguments that we wish to treat as optimization variables.
+This tool can be used for doing parametric optimization on any software that supports input-files. 
+We do this by making a template input file where keywords will be
+replaced by the optimization variables.
 
-The inputfile is then generates and passed into a pipeline defined by a series of calls.
+The input-file is then generates from the template and passed into a pipeline defined by a series of commands.
 
-The output is then parsed and compared to the desired response. Based on how well the results match the desired ones, the loop is repeated using new parameters.
-
-What can it do:
-* Multivariate optimization on non-differentiable problems where the software is interfaced by inputfiles
-
-What it does not:
-* Well... other things
+The output from the software is then parsed and compared to the desired response. Based on how well the results match the desired ones, the loop is repeated using new parameters.
 
 The algorithms included in this software are not the fanciest you will find, but are proven general purpose algorithms.
+
+A model based approach is used where the function to be minimized is approximated by means of radial basis interpolation.
+
 This project is a composition of the wonderfull works of other people and I am just providing the infrastructure. See the following for a list of nice projects:
 
 ### Built With
@@ -268,17 +257,7 @@ Project Link: [https://github.com/PolymerGuy/golmes](https://github.com/PolymerG
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Img Shields](https://shields.io)
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Pages](https://pages.github.com)
-* [Animate.css](https://daneden.github.io/animate.css)
-* [Loaders.css](https://connoratherton.com/loaders)
-* [Slick Carousel](https://kenwheeler.github.io/slick)
-* [Smooth Scroll](https://github.com/cferdinandi/smooth-scroll)
-* [Sticky Kit](http://leafo.net/sticky-kit)
-* [JVectorMap](http://jvectormap.com)
-* [Font Awesome](https://fontawesome.com)
+* [Gopherize Me](https://gopherize.me/)
 
 
 
