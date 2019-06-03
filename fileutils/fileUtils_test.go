@@ -14,7 +14,11 @@ func Test_substitute(t *testing.T) {
 	targets := []string{"one", "two", "three"}
 	substitutes := []string{"1", "2", "3"}
 
-	subData := string(replaceStrings([]byte(data), targets, substitutes))
+	subDataBytes,err := replaceWords([]byte(data), targets, substitutes)
+	if err != nil{
+		t.Errorf("Could not replace words: "+err.Error())
+	}
+	subData := string(subDataBytes)
 
 	if !strings.EqualFold(subData, "This 1\n And these 2\n Should be 3") {
 		t.Errorf("Substitution did not function as intended")

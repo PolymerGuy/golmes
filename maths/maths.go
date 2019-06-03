@@ -52,7 +52,7 @@ func Linspace(min float64, max float64, Nsteps int) []float64 {
 	results := []float64{}
 	step := (max - min) / float64(Nsteps-1)
 	val := min
-	for val <= max {
+	for i := 0; i < (Nsteps); i++ {
 		results = append(results, val)
 		val += step
 

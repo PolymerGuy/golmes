@@ -1,0 +1,54 @@
+Work_directory: ./examples/work/
+
+
+Solver_settings:
+
+  coarsesearch:
+    seed:
+      - 5
+      - 5
+      - 3
+    limits:
+      - 5.1 9.2
+      - 2.3 5.1
+      - 0.0 2.0
+    refinement:
+      - 1.0
+      - 0.5
+
+
+    finesearch:
+      method: Nelder-Mead
+      threshold: 1e-2
+      maxEvals: 50
+
+Abaqus_settings:
+  path: ./examples/dummyApp/abq
+  inputfile: ./examples/dummyApp/inputfile_3arg.txt
+  keywords:
+    - val1
+    - val2
+    - val3
+  initial_parameters:
+    - 8
+    - 3
+    - 0.5
+
+
+DataComparators:
+  - type: synced
+    referencefile: ./examples/dummydata/data.csv
+    currentfile : ./examples/dummyApp/inputfile_iter_res.txt
+    commonargsfile :
+    keywords:
+      - strain
+      - stress
+
+
+
+
+
+
+
+
+

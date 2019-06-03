@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/PolymerGuy/golmes/minimize"
 	"github.com/PolymerGuy/golmes/output"
 	"github.com/PolymerGuy/golmes/yamlparser"
@@ -27,15 +28,30 @@ func optimize(c *cli.Context) {
 
 		file, err := ioutil.ReadFile(yamlFileName)
 		if err != nil {
-			log.Println(err)
+			log.Fatal(err)
 		}
-		coarseSeach, optJob := optJobFromYAML(file)
-		initialParameters, _ := minimize.CoarseSearch(optJob, coarseSeach)
-		log.Println("Coarse search gave:")
-		output.PrettyPrint(initialParameters)
+		coarseSeach, optJob, err := optJobFromYAML(file)
 
-		optJob.InitialParameters = initialParameters.X
 
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if coarseSeach != nil {
+			for _, task := range coarseSeach {
+				// Do a response surface naive search
+				coarseResults, err := minimize.CoarseSearchSurf(optJob, task)
+				if err != nil {
+					log.Println(err)
+				}
+
+				// Use the results from the coarse search as initial parameters
+				optJob.InitialParameters = coarseResults
+				log.Println("Snip here...")
+			}
+		}
+
+		// Do a fine search
 		res, err := minimize.FindFunctionMinima(optJob)
 		if err != nil {
 			log.Panic(err)
@@ -46,8 +62,13 @@ func optimize(c *cli.Context) {
 	}
 }
 
-func optJobFromYAML(yamlFile []byte) (yamlparser.CoarseSearchSettings, minimize.OptimizationJob) {
+func optJobFromYAML(yamlFile []byte) ([]yamlparser.CoarseSearchSettings, minimize.OptimizationJob, error) {
 	parser := yamlparser.Parse(yamlFile)
+
+	fmt.Println(parser.AbqSettings)
+	fmt.Println(parser.SolverSettings)
+
+	coarseSearchs := []yamlparser.CoarseSearchSettings{}
 
 	//TODO: Remove list of comparators. This should be impossible...
 	comparator := parser.NewComparator()[0]
@@ -57,11 +78,13 @@ func optJobFromYAML(yamlFile []byte) (yamlparser.CoarseSearchSettings, minimize.
 	settings := parser.NewOptimizerSettings()
 	coarseSearch := parser.NewCoarseSearch()
 
+	coarseSearchs = append(coarseSearchs, coarseSearch)
+
 	optJob := minimize.OptimizationJob{
 		InitialParameters: costFunction.InitialParameters,
 		Method:            method,
 		CostFunc:          costFunction,
 		Settings:          settings,
 	}
-	return coarseSearch, optJob
+	return coarseSearchs, optJob, nil
 }

@@ -1,0 +1,4 @@
+# Input file
+val1
+val2
+1.0

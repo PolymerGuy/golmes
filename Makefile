@@ -7,8 +7,10 @@ GOGET=$(GOCMD) get
 BINARY_NAME=./golmes
 BINART_FOLDER_NAME=./
 BINARY_UNIX=$(BINARY_NAME)_unix
-ABQ_MOCK_BINARY = ./_ABQSim/abq
-INPUT_FILE = examples/single_arg_example.yml
+ABQ_MOCK_BINARY = ./examples/dummyApp/abq
+INPUT_FILE1 = examples/example_one_arg.yml
+INPUT_FILE2 = examples/example_two_args.yml
+INPUT_FILE3 = examples/example_three_args.yml
 
 
 all: test build run
@@ -22,10 +24,18 @@ clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
 	rm -f $(BINARY_UNIX)
-run:
+run1:
 	$(GOBUILD) -o $(ABQ_MOCK_BINARY) $(ABQ_MOCK_BINARY).go 
 	$(GOBUILD) -o $(BINARY_NAME) $(BINARY_NAME).go
-	$(BINARY_NAME) run $(INPUT_FILE)
+	$(BINARY_NAME) run $(INPUT_FILE1)
+run2:
+	$(GOBUILD) -o $(ABQ_MOCK_BINARY) $(ABQ_MOCK_BINARY).go
+	$(GOBUILD) -o $(BINARY_NAME) $(BINARY_NAME).go
+	$(BINARY_NAME) run $(INPUT_FILE2)
+run3:
+	$(GOBUILD) -o $(ABQ_MOCK_BINARY) $(ABQ_MOCK_BINARY).go
+	$(GOBUILD) -o $(BINARY_NAME) $(BINARY_NAME).go
+	$(BINARY_NAME) run $(INPUT_FILE3)
 
 # Cross compilation
 build-linux:

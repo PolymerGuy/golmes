@@ -1,8 +1,11 @@
 .idea
-/_ABQSim/work
+/examples/work
+examples/dummyApp/work
+examples/dummyApp/abq
 /_ABQSim/abq
 
 *.log
 .log
 .golmes
 golmes
+.abq
